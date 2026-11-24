@@ -1,0 +1,93 @@
+[
+ {
+  "name": "response 500 on filters",
+  "when": "response",
+  "url": "api\\.example\\.com/api/v2/filters",
+  "times": 1,
+  "action": {
+   "status": 500
+  }
+ },
+ {
+  "name": "slow API",
+  "when": "request",
+  "url": "api\\.example\\.com/",
+  "action": {
+   "delay_s": 5
+  },
+  "enabled": false
+ },
+ {
+  "name": "empty list",
+  "when": "response",
+  "url": "api\\.example\\.com/.*search",
+  "action": {
+   "replace_body": "{\"items\": []}"
+  },
+  "enabled": false
+ },
+ {
+  "name": "change response field",
+  "when": "response",
+  "url": "api\\.example\\.com/.*item/\\d+",
+  "action": {
+   "json_set": {
+    "data.name": "TEST NAME",
+    "data.rating": 0
+   }
+  },
+  "enabled": false
+ },
+ {
+  "name": "outgoing: add query param + header",
+  "when": "request",
+  "url": "api\\.example\\.com/api/v2/check_app_version",
+  "method": "GET",
+  "action": {
+   "set_query": {
+    "qa_test": "1",
+    "a": null
+   },
+   "set_header": {
+    "X-QA": "1"
+   },
+   "remove_header": [
+    "If-None-Match"
+   ]
+  },
+  "enabled": false
+ },
+ {
+  "name": "outgoing: only if body contains text",
+  "when": "request",
+  "url": "api\\.example\\.com/api/v2/",
+  "method": "POST",
+  "body_match": "\"query\":\"pizza\"",
+  "action": {
+   "json_set": {
+    "query": "x"
+   }
+  },
+  "enabled": false
+ },
+ {
+  "name": "block outgoing",
+  "when": "request",
+  "url": "assistant\\.example\\.com/api",
+  "action": {
+   "block": true,
+   "status": 503
+  },
+  "enabled": false
+ },
+ {
+  "name": "tamper ws reply",
+  "when": "ws_in",
+  "url": "assistant",
+  "match": "\"type\":\"answer\"",
+  "action": {
+   "replace_body": "{\"type\":\"answer\",\"text\":\"\"}"
+  },
+  "enabled": false
+ }
+]
